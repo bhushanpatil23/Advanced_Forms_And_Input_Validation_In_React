@@ -1,13 +1,32 @@
-import React from "react";
+import React, { useActionState } from "react";
 
 const IntroForm = () => {
-    function formSubmitted(formData) {
+
+    const initState = {
+        firstName : "Bhushan",
+        email : "bhushan@gmail.com",
+        password : "1234",
+        gender : 'male',
+        country : 'usa',
+        hobbies : ["sports"]
+    }
+
+    const [state, action, isPending] = useActionState(formSubmitted,initState);
+
+    async function formSubmitted(prevData, formData) {
+        console.log(prevData,Object.fromEntries(formData));
+        console.log("Submitting....");
+
+        await new Promise((resolve) => setTimeout(resolve,4000));
+
         let data = Object.fromEntries(formData);
         const allHobbies = formData.getAll("hobbies");
 
         data = {...data, hobbies: allHobbies}
 
-        console.log(data);
+        console.log("Submitted Successfully", data);
+
+        return {};
     }
 
     function handleInputUpdate(e) {
@@ -16,13 +35,14 @@ const IntroForm = () => {
     }
 
     return (
-        <form action={formSubmitted}>
+        <form action={action}>
             <label>
                 First Name
                 <input
                     type="text"
                     name="firstName"
-                    placeholder="e.g. Anuj"
+                    placeholder="e.g. Bhushan"
+                    defaultValue={state.firstName}
                     onChange={handleInputUpdate}
                 />
             </label>
@@ -32,6 +52,7 @@ const IntroForm = () => {
                 <input
                     type="email"
                     name="email"
+                    defaultValue={state.email}
                     placeholder="e.g. john@ex.com"
                 />
             </label>
@@ -42,6 +63,7 @@ const IntroForm = () => {
                 <input
                     type="password"
                     name="password"
+                    defaultValue={state.password}
                     placeholder="e.g. Strong password"
                 />
             </label>
@@ -50,15 +72,27 @@ const IntroForm = () => {
             <label>
                 Gender
                 <label>
-                    <input type="radio" value="male" name="gender" />
+                    <input 
+                        type="radio" 
+                        value="male" 
+                        name="gender" 
+                        defaultChecked={"male" ===  state.gender}/>
                     Male
                 </label>
                 <label>
-                    <input type="radio" value="female" name="gender" />
+                    <input 
+                        type="radio" 
+                        value="female" 
+                        name="gender"
+                        defaultChecked={"female" ===  state.gender} />
                     Female
                 </label>
                 <label>
-                    <input type="radio" value="others" name="gender" />
+                    <input 
+                        type="radio" 
+                        value="others" 
+                        name="gender" 
+                        defaultChecked={"others" ===  state.gender}/>
                     Others
                 </label>
             </label>
@@ -66,7 +100,7 @@ const IntroForm = () => {
             <br />
             <label>
                 Country
-                <select name="country">
+                <select name="country" defaultValue={state.country}>
                     <option value="">Choose a Country</option>
                     <option value="india">India</option>
                     <option value="usa">USA</option>
@@ -78,21 +112,36 @@ const IntroForm = () => {
             <label>
                 Hobbies
                 <label>
-                    <input type="checkbox" name="hobbies" value="sports" />
+                    <input 
+                        type="checkbox" 
+                        name="hobbies" 
+                        value="sports" 
+                        defaultValue={state.hobbies?.includes("sports")}
+                    />
                     Sports
                 </label>
                 <label>
-                    <input type="checkbox" name="hobbies" value="reading" />
+                    <input 
+                        type="checkbox" 
+                        name="hobbies" 
+                        value="reading" 
+                        defaultValue={state.hobbies?.includes("reading")}
+                    />
                     Reading
                 </label>
                 <label>
-                    <input type="checkbox" name="hobbies" value="cooking" />
+                    <input 
+                        type="checkbox" 
+                        name="hobbies" 
+                        value="cooking" 
+                        defaultValue={state.hobbies?.includes("cooking")}
+                    />
                     Cooking
                 </label>
             </label>
 
             <br />
-            <button type="submit">Submit</button>
+            <button disabled={isPending} type="submit">Submit</button>
             <button type="button">Cancel</button>
         </form>
     );
