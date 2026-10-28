@@ -1,4 +1,4 @@
-import React, { useActionState } from "react";
+import React, { useActionState, useState } from "react";
 
 const IntroForm = () => {
 
@@ -29,20 +29,53 @@ const IntroForm = () => {
         return {};
     }
 
+    const emptyState = {
+        firstName : "",
+        email : "",
+        password : "",
+        gender : "",
+        country : "",
+        hobbies : []
+    };
+
+    const [data,setData] = useState(emptyState);
+
     function handleInputUpdate(e) {
-        const { name, value } = e.target;
-        console.log(name, value);
+        const { name, value, type, checked } = e.target;
+
+        if(type === "checkbox"){
+            const newHobbies = checked
+            ? [data.hobbies, value]
+            : data.hobbies.filter((item) => item !== value);
+
+            const newData = {...data ,hobbies : newHobbies};
+            setData(newData);
+            console.log(newData);
+            return;
+        }
+
+        const newData = {...data, [name] : value }
+        setData(newData);
+
+        console.log(newData);
+    }
+
+    function onFormSubmit(e){
+        e.preventDefault();
+
+        // call the backend and send the data there ... 
+        setData(emptyState);
     }
 
     return (
-        <form action={action}>
+        <form onSubmit={onFormSubmit}>
             <label>
                 First Name
                 <input
                     type="text"
                     name="firstName"
                     placeholder="e.g. Bhushan"
-                    defaultValue={state.firstName}
+                    value={data.firstName}
                     onChange={handleInputUpdate}
                 />
             </label>
@@ -52,8 +85,9 @@ const IntroForm = () => {
                 <input
                     type="email"
                     name="email"
-                    defaultValue={state.email}
                     placeholder="e.g. john@ex.com"
+                    value={data.email}
+                    onChange={handleInputUpdate}
                 />
             </label>
 
@@ -76,7 +110,9 @@ const IntroForm = () => {
                         type="radio" 
                         value="male" 
                         name="gender" 
-                        defaultChecked={"male" ===  state.gender}/>
+                        checked={"male" ===  data.gender}
+                        onChange={handleInputUpdate}
+                    />
                     Male
                 </label>
                 <label>
@@ -84,7 +120,9 @@ const IntroForm = () => {
                         type="radio" 
                         value="female" 
                         name="gender"
-                        defaultChecked={"female" ===  state.gender} />
+                        checked={"female" ===  data.gender}
+                        onChange={handleInputUpdate}   
+                    />
                     Female
                 </label>
                 <label>
@@ -92,7 +130,9 @@ const IntroForm = () => {
                         type="radio" 
                         value="others" 
                         name="gender" 
-                        defaultChecked={"others" ===  state.gender}/>
+                        checked={"others" ===  data.gender}
+                        onChange={handleInputUpdate}
+                    />
                     Others
                 </label>
             </label>
@@ -100,7 +140,11 @@ const IntroForm = () => {
             <br />
             <label>
                 Country
-                <select name="country" defaultValue={state.country}>
+                <select 
+                    name="country" 
+                    value={data.country}
+                    onChange={handleInputUpdate}
+                >
                     <option value="">Choose a Country</option>
                     <option value="india">India</option>
                     <option value="usa">USA</option>
@@ -116,7 +160,8 @@ const IntroForm = () => {
                         type="checkbox" 
                         name="hobbies" 
                         value="sports" 
-                        defaultValue={state.hobbies?.includes("sports")}
+                        checked={data.hobbies?.includes("sports")}
+                        onChange={handleInputUpdate}
                     />
                     Sports
                 </label>
@@ -125,7 +170,8 @@ const IntroForm = () => {
                         type="checkbox" 
                         name="hobbies" 
                         value="reading" 
-                        defaultValue={state.hobbies?.includes("reading")}
+                        checked={data.hobbies?.includes("reading")}
+                        onChange={handleInputUpdate}
                     />
                     Reading
                 </label>
@@ -134,7 +180,8 @@ const IntroForm = () => {
                         type="checkbox" 
                         name="hobbies" 
                         value="cooking" 
-                        defaultValue={state.hobbies?.includes("cooking")}
+                        checked={data.hobbies?.includes("cooking")}
+                        onChange={handleInputUpdate}
                     />
                     Cooking
                 </label>
