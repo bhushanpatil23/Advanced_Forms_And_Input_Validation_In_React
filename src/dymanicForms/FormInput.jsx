@@ -1,5 +1,5 @@
 
-const FormInput = ({id, label, options, type, name,value, onChange}) => {
+const FormInput = ({id, label, options, type, name,value, onChange, error}) => {
 
     const RadioComponent = type === "radio" && (
         <div>
@@ -20,7 +20,7 @@ const FormInput = ({id, label, options, type, name,value, onChange}) => {
     );
 
     const SelectComponent = type === 'select' && (
-        <select id={id} name={name} onChange={onChange}>
+        <select id={id} name={name} value={value} onChange={onChange}>
             {options.map(item => (
                 <option key={item.value} value={item.value} >{item.label}</option>
             ))}
@@ -65,10 +65,15 @@ const FormInput = ({id, label, options, type, name,value, onChange}) => {
                 CheckBoxComponent
             ) :
             (
-            <input id={id} type={type} name={name} value={value} onChange={onChange}/>
-            )
-        }
-        
+            <input 
+                id={id} 
+                type={type} 
+                name={name}
+                value={value}
+                onChange={onChange}
+            />
+        )}
+        {error && <p style={{color:"red"}}>{error}</p>}
     </div>
   )
 }
